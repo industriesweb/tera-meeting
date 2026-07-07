@@ -75,12 +75,12 @@ export async function notifyMeetingParticipants(
 
 export async function getPreferences(userId: string) {
   const prefs = await prisma.notificationPreference.findUnique({ where: { userId } });
-  return prefs ?? { userId, meetingReminderEmail: false, outcomePromptEmail: false };
+  return prefs ?? { userId, meetingReminderEmail: false };
 }
 
 export async function updatePreferences(
   userId: string,
-  data: { meetingReminderEmail?: boolean; outcomePromptEmail?: boolean }
+  data: { meetingReminderEmail?: boolean }
 ) {
   return prisma.notificationPreference.upsert({
     where: { userId },

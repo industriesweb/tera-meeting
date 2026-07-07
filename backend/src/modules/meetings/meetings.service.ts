@@ -1175,7 +1175,7 @@ export async function overrideScheduleMeeting(id: string, userId: string, body: 
   if (locationParts.length > 0 && attendeeIds.length > 0) {
     notifs.push(...attendeeIds.map((uid) => ({
       userId: uid,
-      type: "MeetingUpdated" as any,
+      type: "MEETING_UPDATED",
       title: `Meeting updated: ${meeting.title}`,
       body: `The ${label} for "${meeting.title}" has been updated.`,
       data: { meetingId: id },
@@ -1327,7 +1327,7 @@ export async function addMeetingAttendee(meetingId: string, actorId: string, tar
   }
 
   return prisma.meetingAttendee.create({
-    data: { meetingId, userId: targetUserId, role: "attendee" },
+    data: { meetingId, userId: targetUserId },
   });
 }
 

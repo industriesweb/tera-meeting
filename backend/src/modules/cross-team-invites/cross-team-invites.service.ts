@@ -41,7 +41,7 @@ export async function reviewInvite(id: string, status: "APPROVED" | "DECLINED", 
   if (status === "APPROVED") {
     await prisma.meetingAttendee.upsert({
       where: { meetingId_userId: { meetingId: invite.meetingId, userId: invite.invitedUserId } },
-      create: { meetingId: invite.meetingId, userId: invite.invitedUserId, role: "attendee" },
+      create: { meetingId: invite.meetingId, userId: invite.invitedUserId },
       update: {},
     });
   }

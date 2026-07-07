@@ -10,9 +10,9 @@ export async function createJoinRequest(meetingId: string, requesterId: string) 
 
   const meeting = await prisma.meeting.findUnique({
     where: { id: meetingId },
-    select: { status: true, organizationId: true, deletedAt: true },
+    select: { status: true, organizationId: true },
   });
-  if (!meeting || meeting.deletedAt) throw new NotFoundError("Meeting");
+  if (!meeting) throw new NotFoundError("Meeting");
   if (meeting.status !== "IN_PROGRESS") throw new ValidationError("Can only request to join a live meeting");
 
   const user = await prisma.user.findUnique({ where: { id: requesterId }, select: { organizationId: true } });
@@ -50,7 +50,7 @@ export async function reviewJoinRequest(id: string, meetingId: string, status: "
   if (status === "APPROVED") {
     await prisma.meetingAttendee.upsert({
       where: { meetingId_userId: { meetingId: request.meetingId, userId: request.requesterId } },
-      create: { meetingId: request.meetingId, userId: request.requesterId, role: "attendee" },
+      create: { meetingId: request.meetingId, userId: request.requesterId },
       update: {},
     });
   }
