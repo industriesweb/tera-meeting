@@ -773,7 +773,7 @@ export async function startMeeting(id: string, userId: string) {
       create: {
         meetingId: id,
         startedAt: now,
-        activeAgendaItem: firstItem ? { connect: { id: firstItem.id } } : undefined,
+        activeAgendaItemId: firstItem?.id ?? null,
         activeItemStartedAt: firstItem ? now : null,
         version: 0,
       },
