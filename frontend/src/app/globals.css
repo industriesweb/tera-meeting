@@ -1,0 +1,290 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Native form controls: let browser paint dropdowns, date pickers, etc. in dark mode */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+/* ── Runtime color tokens ─────────────────────────────────────────── */
+
+:root {
+  --color-background: #faf6f0;
+  --color-foreground: #2e3230;
+  --color-surface: #faf6f0;
+  --color-surface-bright: #faf6f0;
+  --color-surface-dim: #dbd7cf;
+  --color-surface-container: #f0ece4;
+  --color-surface-container-low: #f5f1ea;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #eae6de;
+  --color-surface-container-highest: #e4e0d8;
+  --color-surface-variant: #e4e0d8;
+  --color-primary: #2e5838;
+  --color-primary-foreground: #ffffff;
+  --color-primary-container: #588a64;
+  --color-primary-fixed: #a6c9b0;
+  --color-primary-fixed-dim: #6a9c78;
+  --color-on-primary-container: #c2e8cc;
+  --color-on-primary-fixed: #00180a;
+  --color-on-primary-fixed-variant: #1c4a2c;
+  --color-secondary: #6b6358;
+  --color-secondary-foreground: #ffffff;
+  --color-secondary-container: #f0e8db;
+  --color-secondary-fixed: #f0e8db;
+  --color-secondary-fixed-dim: #d4ccbf;
+  --color-on-secondary-container: #5e5548;
+  --color-on-secondary-fixed: #1e1a13;
+  --color-on-secondary-fixed-variant: #4a4538;
+  --color-tertiary: #705c30;
+  --color-tertiary-foreground: #ffffff;
+  --color-tertiary-container: #c4a66a;
+  --color-tertiary-fixed: #f8e0a8;
+  --color-tertiary-fixed-dim: #dcc48e;
+  --color-on-tertiary-container: #554020;
+  --color-on-tertiary-fixed: #221a05;
+  --color-on-tertiary-fixed-variant: #554020;
+  --color-error: #b83230;
+  --color-error-container: #ffdad8;
+  --color-error-foreground: #ffffff;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #690005;
+  --color-outline: #74796e;
+  --color-outline-variant: #c4c8bc;
+  --color-on-surface: #2e3230;
+  --color-on-surface-variant: #4a4e4a;
+  --color-inverse-surface: #2e3230;
+  --color-inverse-on-surface: #f5f0e8;
+  --color-inverse-primary: #8ecf9e;
+  --color-on-background: #2e3230;
+  --color-surface-tint: #2e5838;
+  --color-border: oklch(0.922 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.145 0 0);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-accent: oklch(0.97 0 0);
+  --color-accent-foreground: oklch(0.205 0 0);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-input: oklch(0.922 0 0);
+  --color-ring: oklch(0.708 0 0);
+  --color-chart-1: oklch(0.87 0 0);
+  --color-chart-2: oklch(0.556 0 0);
+  --color-chart-3: oklch(0.439 0 0);
+  --color-chart-4: oklch(0.371 0 0);
+  --color-chart-5: oklch(0.269 0 0);
+  --color-sidebar: oklch(0.985 0 0);
+  --color-sidebar-foreground: oklch(0.145 0 0);
+  --color-sidebar-primary: oklch(0.205 0 0);
+  --color-sidebar-primary-foreground: oklch(0.985 0 0);
+  --color-sidebar-accent: oklch(0.97 0 0);
+  --color-sidebar-accent-foreground: oklch(0.205 0 0);
+  --color-sidebar-border: oklch(0.922 0 0);
+  --color-sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --color-background: #131313;
+  --color-foreground: #e5e2e1;
+  --color-surface: #131313;
+  --color-surface-bright: #393939;
+  --color-surface-dim: #131313;
+  --color-surface-container: #201f1f;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+  --color-surface-variant: #353534;
+  --color-primary: #5f9472;
+  --color-primary-foreground: #002612;
+  --color-primary-container: #488a5c;
+  --color-primary-fixed: #94d2a4;
+  --color-primary-fixed-dim: #5f9472;
+  --color-on-primary-container: #002a14;
+  --color-on-primary-fixed: #00180a;
+  --color-on-primary-fixed-variant: #0e3d20;
+  --color-secondary: #c8c6c5;
+  --color-secondary-foreground: #303030;
+  --color-secondary-container: #474746;
+  --color-secondary-fixed: #e4e2e1;
+  --color-secondary-fixed-dim: #c8c6c5;
+  --color-on-secondary-container: #b6b5b4;
+  --color-on-secondary-fixed: #1b1c1c;
+  --color-on-secondary-fixed-variant: #474746;
+  --color-tertiary: #ffb2be;
+  --color-tertiary-foreground: #551d2a;
+  --color-tertiary-container: #d28391;
+  --color-tertiary-fixed: #ffd9de;
+  --color-tertiary-fixed-dim: #ffb2be;
+  --color-on-tertiary-container: #571e2b;
+  --color-on-tertiary-fixed: #3a0716;
+  --color-on-tertiary-fixed-variant: #713340;
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-error-foreground: #690005;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+  --color-outline: #8a938a;
+  --color-outline-variant: #404941;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #c0c9bf;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #313030;
+  --color-inverse-primary: #255034;
+  --color-on-background: #e5e2e1;
+  --color-surface-tint: #5f9472;
+  --color-border: #404941;
+  --color-card: #201f1f;
+  --color-card-foreground: #e5e2e1;
+  --color-popover: #201f1f;
+  --color-popover-foreground: #e5e2e1;
+  --color-muted: #2a2a2a;
+  --color-muted-foreground: #c8c6c5;
+  --color-accent: #2a2a2a;
+  --color-accent-foreground: #e5e2e1;
+  --color-destructive: #ffb4ab;
+  --color-input: #2a2a2a;
+  --color-ring: #5f9472;
+  --color-chart-1: #5f9472;
+  --color-chart-2: #ffb2be;
+  --color-chart-3: #c8c6c5;
+  --color-chart-4: #8a938a;
+  --color-chart-5: #488a5c;
+  --color-sidebar: #0e0e0e;
+  --color-sidebar-foreground: #e5e2e1;
+  --color-sidebar-primary: #5f9472;
+  --color-sidebar-primary-foreground: #002612;
+  --color-sidebar-accent: #2a2a2a;
+  --color-sidebar-accent-foreground: #e5e2e1;
+  --color-sidebar-border: #404941;
+  --color-sidebar-ring: #97d4a6;
+}
+
+/* ── Tailwind utility mappings (resolves via var()) ────────────────── */
+
+@theme {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-surface: var(--color-surface);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-container: var(--color-primary-container);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+  --color-tertiary: var(--color-tertiary);
+  --color-tertiary-foreground: var(--color-tertiary-foreground);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-error: var(--color-error);
+  --color-error-container: var(--color-error-container);
+  --color-error-foreground: var(--color-error-foreground);
+  --color-on-error: var(--color-on-error);
+  --color-on-error-container: var(--color-on-error-container);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-on-background: var(--color-on-background);
+  --color-surface-tint: var(--color-surface-tint);
+  --color-border: var(--color-border);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-popover: var(--color-popover);
+  --color-popover-foreground: var(--color-popover-foreground);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-destructive: var(--color-destructive);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
+  --color-chart-1: var(--color-chart-1);
+  --color-chart-2: var(--color-chart-2);
+  --color-chart-3: var(--color-chart-3);
+  --color-chart-4: var(--color-chart-4);
+  --color-chart-5: var(--color-chart-5);
+  --color-sidebar: var(--color-sidebar);
+  --color-sidebar-foreground: var(--color-sidebar-foreground);
+  --color-sidebar-primary: var(--color-sidebar-primary);
+  --color-sidebar-primary-foreground: var(--color-sidebar-primary-foreground);
+  --color-sidebar-accent: var(--color-sidebar-accent);
+  --color-sidebar-accent-foreground: var(--color-sidebar-accent-foreground);
+  --color-sidebar-border: var(--color-sidebar-border);
+  --color-sidebar-ring: var(--color-sidebar-ring);
+}
+
+/* ── Static aliases (inlined — never change at runtime) ────────────── */
+
+@theme inline {
+  --font-headline: "Manrope", sans-serif;
+  --font-display: "Manrope", sans-serif;
+  --font-body: "Work Sans", sans-serif;
+  --font-sans: "Work Sans", sans-serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+/* ── Base layer ────────────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    @apply border-outline-variant/30;
+  }
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+  select, option, optgroup {
+    color-scheme: light;
+  }
+  .dark select, .dark option, .dark optgroup {
+    color-scheme: dark !important;
+    background-color: #313030 !important;
+    color: #e5e2e1 !important;
+  }
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #c4c8bc; border-radius: 10px; }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #404941; }
+}

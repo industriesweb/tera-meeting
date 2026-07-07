@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+.env
+.env.local
+.env.*.local
+!.env.example
+*.tsbuildinfo
+server-*.txt
+server-*.log
+test-check.ts
+create-db.ts
+dev-output.log
+start-bg.ps1

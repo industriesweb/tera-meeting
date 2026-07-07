@@ -1,0 +1,521 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MeetingStatus {
+  DRAFT
+  SCHEDULED
+  IN_PROGRESS
+  ENDED_PENDING_SUMMARY
+  COMPLETED_LOCKED
+  CANCELLED
+}
+
+enum MeetingKind {
+  QUICK_TEAM
+  STRUCTURED
+}
+
+enum OperationalRole {
+  MEMBER
+  TEAM_ADMIN
+  SECRETARY
+}
+
+enum LocationType {
+  PHYSICAL
+  ONLINE
+  HYBRID
+}
+
+enum CrossTeamInviteStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum MeetingJoinRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum ExecutiveRequestStatus {
+  OPEN
+  PLANNING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum ExecutiveRequestTargetType {
+  USER
+  TEAM
+}
+
+enum PreferredPeriod {
+  MORNING
+  AFTERNOON
+}
+
+enum ParkingLotStatus {
+  PENDING_REVIEW
+  APPROVED
+  USED_IN_AGENDA
+  ARCHIVED
+}
+
+enum AgendaItemStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+// ── Organization ──
+model Organization {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  timezone  String   @default("UTC")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  functionalTeams   FunctionalTeam[]
+  users             User[]
+  meetings          Meeting[]
+  rooms             Room[]
+  templates         Template[]
+  executiveRequests ExecutiveRequest[]
+  parkingLotItems   ParkingLotItem[]
+  auditEvents       AuditEvent[]
+
+  @@map("organizations")
+}
+
+// ── Functional Team (v2 replacement for legacy "Team" as "Department") ──
+model FunctionalTeam {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization             Organization             @relation(fields: [organizationId], references: [id])
+  members                  User[]
+  ownedMeetings            Meeting[]                @relation("OwnerTeam")
+  executiveRequestTargets  ExecutiveRequestTarget[]
+  parkingLotItems          ParkingLotItem[]
+  crossTeamInvitesFromTeam CrossTeamInvite[]
+  templates                Template[]
+
+  @@unique([organizationId, name])
+  @@map("functional_teams")
+}
+
+// ── User ──
+model User {
+  id               String          @id @default(uuid()) @db.Uuid
+  organizationId   String          @map("organization_id") @db.Uuid
+  functionalTeamId String?         @map("functional_team_id") @db.Uuid
+  name             String
+  email            String
+  operationalRole  OperationalRole @default(MEMBER) @map("operational_role")
+  isExecutive      Boolean         @default(false) @map("is_executive")
+  isActive         Boolean         @default(true) @map("is_active")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  organization              Organization             @relation(fields: [organizationId], references: [id])
+  functionalTeam            FunctionalTeam?          @relation(fields: [functionalTeamId], references: [id])
+  createdMeetings           Meeting[]                @relation("MeetingCreator")
+  organizedMeetings         Meeting[]                @relation("MeetingOrganizer")
+  attendees                 MeetingAttendee[]
+  attendeesRemovedBy        MeetingAttendee[]        @relation("AttendeeRemover")
+  agendaSpeakers            AgendaItemSpeaker[]
+  notifications             Notification[]
+  notificationPref          NotificationPreference?
+  executiveRequests         ExecutiveRequest[]       @relation("ExecutiveRequestCreator")
+  executiveRequestTargets   ExecutiveRequestTarget[]
+  parkingLotCreatedItems    ParkingLotItem[]         @relation("ParkingLotCreator")
+  parkingLotReviewedItems   ParkingLotItem[]         @relation("ParkingLotReviewer")
+  invitedCrossTeam          CrossTeamInvite[]        @relation("InvitedUser")
+  requestedCrossTeamInvites CrossTeamInvite[]        @relation("CrossTeamInviteRequester")
+  reviewedCrossTeamInvites  CrossTeamInvite[]        @relation("CrossTeamInviteReviewer")
+  joinRequests              MeetingJoinRequest[]     @relation("JoinRequester")
+  reviewedJoinRequests      MeetingJoinRequest[]     @relation("JoinRequestReviewer")
+  notes                     MeetingNote[]
+  auditEvents               AuditEvent[]
+
+  @@unique([organizationId, email])
+  @@map("users")
+}
+
+// ── Room ──
+model Room {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  name           String
+  isActive       Boolean   @default(true) @map("is_active")
+  deactivatedAt  DateTime? @map("deactivated_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  meetings     Meeting[]
+  bookings     RoomBooking[]
+
+  @@unique([organizationId, name])
+  @@map("rooms")
+}
+
+model RoomBooking {
+  id        String   @id @default(uuid()) @db.Uuid
+  roomId    String   @map("room_id") @db.Uuid
+  meetingId String   @map("meeting_id") @db.Uuid
+  startsAt  DateTime @map("starts_at") @db.Timestamptz
+  endsAt    DateTime @map("ends_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at")
+
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, meetingId])
+  @@map("room_bookings")
+}
+
+// ── Meeting ──
+model Meeting {
+  id                     String        @id @default(uuid()) @db.Uuid
+  organizationId         String        @map("organization_id") @db.Uuid
+  ownerTeamId            String        @map("owner_team_id") @db.Uuid
+  title                  String
+  kind                   MeetingKind   @map("kind")
+  status                 MeetingStatus @default(DRAFT)
+  scheduledAt            DateTime?     @map("scheduled_at") @db.Timestamptz
+  timezone               String        @default("UTC")
+  plannedDurationSeconds Int           @map("planned_duration_seconds")
+  actualDurationSeconds  Int?          @map("actual_duration_seconds")
+  locationType           LocationType  @default(PHYSICAL) @map("location_type")
+  roomId                 String?       @map("room_id") @db.Uuid
+  onlineLink             String?       @map("online_link")
+  organizerId            String        @map("organizer_id") @db.Uuid
+  executiveRequestId     String?       @map("executive_request_id") @db.Uuid
+  organizerSummary       String?       @map("organizer_summary")
+  endedAt                DateTime?     @map("ended_at") @db.Timestamptz
+  summarySubmittedAt     DateTime?     @map("summary_submitted_at") @db.Timestamptz
+  lockedAt               DateTime?     @map("locked_at") @db.Timestamptz
+  summaryDeadlineAt      DateTime?     @map("summary_deadline_at") @db.Timestamptz
+  summaryAutoLockedAt    DateTime?     @map("summary_auto_locked_at") @db.Timestamptz
+  createdById            String        @map("created_by_id") @db.Uuid
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
+
+  creator               User                 @relation("MeetingCreator", fields: [createdById], references: [id])
+  organizer             User                 @relation("MeetingOrganizer", fields: [organizerId], references: [id])
+  ownerTeam             FunctionalTeam       @relation("OwnerTeam", fields: [ownerTeamId], references: [id])
+  organization          Organization         @relation(fields: [organizationId], references: [id])
+  room                  Room?                @relation(fields: [roomId], references: [id])
+  executiveRequest      ExecutiveRequest?    @relation("ExecutiveRequestMeetings", fields: [executiveRequestId], references: [id])
+  currentRequestPlan    ExecutiveRequest?    @relation("ExecutiveRequestCurrentMeeting")
+  attendees             MeetingAttendee[]
+  agendaItems           AgendaItem[]
+  timer                 MeetingTimer?
+  bookings              RoomBooking[]
+  notes                 MeetingNote[]
+  parkingLotSourceItems ParkingLotItem[]     @relation("ParkingLotSourceMeeting")
+  parkingLotAgendaItems ParkingLotItem[]     @relation("ParkingLotAgendaMeeting")
+  crossTeamInvites      CrossTeamInvite[]
+  meetingJoinRequests   MeetingJoinRequest[]
+  auditEvents           AuditEvent[]
+
+  @@index([organizationId, status, scheduledAt])
+  @@index([ownerTeamId, scheduledAt])
+  @@map("meetings")
+}
+
+// ── Meeting Timer ──
+model MeetingTimer {
+  meetingId              String    @id @map("meeting_id") @db.Uuid
+  startedAt              DateTime? @map("started_at") @db.Timestamptz
+  activeAgendaItemId     String?   @map("active_agenda_item_id") @db.Uuid
+  activeItemStartedAt    DateTime? @map("active_item_started_at") @db.Timestamptz
+  overtimeStartedAt      DateTime? @map("overtime_started_at") @db.Timestamptz
+  overtimeDeadlineAt     DateTime? @map("overtime_deadline_at") @db.Timestamptz
+  overtimeExtensionCount Int       @default(0) @map("overtime_extension_count")
+  version                Int       @default(0)
+  updatedAt              DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  meeting          Meeting     @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  activeAgendaItem AgendaItem? @relation("ActiveAgendaItem", fields: [activeAgendaItemId], references: [id])
+
+  @@map("meeting_timers")
+}
+
+// ── Attendees ──
+model MeetingAttendee {
+  id          String    @id @default(uuid()) @db.Uuid
+  meetingId   String    @map("meeting_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  removedAt   DateTime? @map("removed_at") @db.Timestamptz
+  removedById String?   @map("removed_by_id") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+  removedBy User?   @relation("AttendeeRemover", fields: [removedById], references: [id])
+
+  @@unique([meetingId, userId])
+  @@map("meeting_attendees")
+}
+
+// ── Agenda Items ──
+model AgendaItem {
+  id                    String           @id @default(uuid()) @db.Uuid
+  meetingId             String           @map("meeting_id") @db.Uuid
+  title                 String
+  description           String?
+  durationSeconds       Int              @map("duration_seconds")
+  extensionSeconds      Int              @default(0) @map("extension_seconds")
+  sortOrder             Int              @map("sort_order")
+  status                AgendaItemStatus @default(NOT_STARTED)
+  notes                 String?
+  activatedAt           DateTime?        @map("activated_at") @db.Timestamptz
+  completedAt           DateTime?        @map("completed_at") @db.Timestamptz
+  skippedAt             DateTime?        @map("skipped_at") @db.Timestamptz
+  actualDurationSeconds Int?             @map("actual_duration_seconds")
+
+  meeting      Meeting             @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  speakers     AgendaItemSpeaker[]
+  activeTimers MeetingTimer[]      @relation("ActiveAgendaItem")
+
+  @@map("agenda_items")
+}
+
+model AgendaItemSpeaker {
+  agendaItemId String @map("agenda_item_id") @db.Uuid
+  userId       String @map("user_id") @db.Uuid
+
+  agendaItem AgendaItem @relation(fields: [agendaItemId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@id([agendaItemId, userId])
+  @@map("agenda_item_speakers")
+}
+
+// ── Meeting Notes ──
+model MeetingNote {
+  id        String   @id @default(uuid()) @db.Uuid
+  meetingId String   @map("meeting_id") @db.Uuid
+  authorId  String   @map("author_id") @db.Uuid
+  content   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id])
+
+  @@unique([meetingId, authorId])
+  @@map("meeting_notes")
+}
+
+// ── Unified Audit ──
+model AuditEvent {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  meetingId      String?  @map("meeting_id") @db.Uuid
+  actorId        String?  @map("actor_id") @db.Uuid
+  action         String
+  entityType     String   @map("entity_type")
+  entityId       String?  @map("entity_id") @db.Uuid
+  details        Json?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  meeting      Meeting?     @relation(fields: [meetingId], references: [id])
+  actor        User?        @relation(fields: [actorId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([meetingId])
+  @@map("audit_events")
+}
+
+// ── Executive Requests ──
+model ExecutiveRequest {
+  id                       String                 @id @default(uuid()) @db.Uuid
+  organizationId           String                 @map("organization_id") @db.Uuid
+  createdByExecutiveId     String                 @map("created_by_executive_id") @db.Uuid
+  title                    String
+  description              String?
+  requestedDate            DateTime               @map("requested_date") @db.Date
+  preferredPeriod          PreferredPeriod        @default(MORNING) @map("preferred_period")
+  requestedDurationSeconds Int?                   @map("requested_duration_seconds")
+  urgency                  String?
+  status                   ExecutiveRequestStatus @default(OPEN)
+  currentMeetingId         String?                @unique @map("current_meeting_id") @db.Uuid
+  createdAt                DateTime               @default(now()) @map("created_at")
+  updatedAt                DateTime               @updatedAt @map("updated_at")
+  cancelledAt              DateTime?              @map("cancelled_at") @db.Timestamptz
+
+  organization   Organization             @relation(fields: [organizationId], references: [id])
+  createdBy      User                     @relation("ExecutiveRequestCreator", fields: [createdByExecutiveId], references: [id])
+  currentMeeting Meeting?                 @relation("ExecutiveRequestCurrentMeeting", fields: [currentMeetingId], references: [id])
+  meetings       Meeting[]                @relation("ExecutiveRequestMeetings")
+  targets        ExecutiveRequestTarget[]
+
+  @@map("executive_requests")
+}
+
+model ExecutiveRequestTarget {
+  id                 String                     @id @default(uuid()) @db.Uuid
+  executiveRequestId String                     @map("executive_request_id") @db.Uuid
+  targetType         ExecutiveRequestTargetType @map("target_type")
+  targetUserId       String?                    @map("target_user_id") @db.Uuid
+  targetTeamId       String?                    @map("target_team_id") @db.Uuid
+
+  executiveRequest ExecutiveRequest @relation(fields: [executiveRequestId], references: [id], onDelete: Cascade)
+  targetUser       User?            @relation(fields: [targetUserId], references: [id])
+  targetTeam       FunctionalTeam?  @relation(fields: [targetTeamId], references: [id])
+
+  @@map("executive_request_targets")
+}
+
+// ── Parking Lot ──
+model ParkingLotItem {
+  id              String           @id @default(uuid()) @db.Uuid
+  organizationId  String           @map("organization_id") @db.Uuid
+  teamId          String           @map("team_id") @db.Uuid
+  title           String
+  note            String?
+  createdById     String           @map("created_by_id") @db.Uuid
+  sourceMeetingId String?          @map("source_meeting_id") @db.Uuid
+  status          ParkingLotStatus @default(PENDING_REVIEW)
+  reviewedById    String?          @map("reviewed_by_id") @db.Uuid
+  reviewedAt      DateTime?        @map("reviewed_at") @db.Timestamptz
+  agendaMeetingId String?          @map("agenda_meeting_id") @db.Uuid
+  archivedAt      DateTime?        @map("archived_at") @db.Timestamptz
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  organization  Organization   @relation(fields: [organizationId], references: [id])
+  team          FunctionalTeam @relation(fields: [teamId], references: [id])
+  createdBy     User           @relation("ParkingLotCreator", fields: [createdById], references: [id])
+  reviewedBy    User?          @relation("ParkingLotReviewer", fields: [reviewedById], references: [id])
+  sourceMeeting Meeting?       @relation("ParkingLotSourceMeeting", fields: [sourceMeetingId], references: [id])
+  agendaMeeting Meeting?       @relation("ParkingLotAgendaMeeting", fields: [agendaMeetingId], references: [id])
+
+  @@index([teamId, status])
+  @@map("parking_lot_items")
+}
+
+// ── Cross-Team Invites ──
+model CrossTeamInvite {
+  id                String                @id @default(uuid()) @db.Uuid
+  meetingId         String                @map("meeting_id") @db.Uuid
+  invitedUserId     String                @map("invited_user_id") @db.Uuid
+  invitedFromTeamId String                @map("invited_from_team_id") @db.Uuid
+  requestedById     String                @map("requested_by_id") @db.Uuid
+  status            CrossTeamInviteStatus @default(PENDING)
+  reviewedById      String?               @map("reviewed_by_id") @db.Uuid
+  reviewedAt        DateTime?             @map("reviewed_at") @db.Timestamptz
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+
+  meeting         Meeting        @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  invitedUser     User           @relation("InvitedUser", fields: [invitedUserId], references: [id])
+  invitedFromTeam FunctionalTeam @relation(fields: [invitedFromTeamId], references: [id])
+  requestedBy     User           @relation("CrossTeamInviteRequester", fields: [requestedById], references: [id])
+  reviewedBy      User?          @relation("CrossTeamInviteReviewer", fields: [reviewedById], references: [id])
+
+  @@unique([meetingId, invitedUserId])
+  @@map("cross_team_invites")
+}
+
+// ── Meeting Join Requests ──
+model MeetingJoinRequest {
+  id           String                   @id @default(uuid()) @db.Uuid
+  meetingId    String                   @map("meeting_id") @db.Uuid
+  requesterId  String                   @map("requester_id") @db.Uuid
+  status       MeetingJoinRequestStatus @default(PENDING)
+  reviewedById String?                  @map("reviewed_by_id") @db.Uuid
+  reviewedAt   DateTime?                @map("reviewed_at") @db.Timestamptz
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  updatedAt    DateTime                 @updatedAt @map("updated_at")
+
+  meeting    Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  requester  User    @relation("JoinRequester", fields: [requesterId], references: [id])
+  reviewedBy User?   @relation("JoinRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@unique([meetingId, requesterId])
+  @@map("meeting_join_requests")
+}
+
+// ── Templates (disabled until migration) ──
+model Template {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  ownerTeamId    String?  @map("owner_team_id") @db.Uuid
+  name           String
+  description    String?
+  createdById    String?  @map("created_by_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization         @relation(fields: [organizationId], references: [id])
+  ownerTeam    FunctionalTeam?      @relation(fields: [ownerTeamId], references: [id])
+  agendaItems  TemplateAgendaItem[]
+
+  @@map("templates")
+}
+
+model TemplateAgendaItem {
+  id              String   @id @default(uuid()) @db.Uuid
+  templateId      String   @map("template_id") @db.Uuid
+  title           String
+  durationSeconds Int      @default(0) @map("duration_seconds")
+  notes           String?
+  sortOrder       Int      @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  template Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("template_agenda_items")
+}
+
+// ── Notifications ──
+enum NotificationType {
+  MEETING_INVITATION
+  MEETING_REMINDER
+  MEETING_UPDATED
+  MEETING_CANCELLED
+  ATTENDEE_REMOVED
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  type      NotificationType
+  title     String
+  body      String?
+  data      Json?
+  readAt    DateTime?        @map("read_at") @db.Timestamptz
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  userId               String   @id @map("user_id") @db.Uuid
+  meetingReminderEmail Boolean  @default(false) @map("meeting_reminder_email")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}

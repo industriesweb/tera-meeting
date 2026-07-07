@@ -1,0 +1,29 @@
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+!**/.env.example
+.DS_Store
+*.pem
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.vercel
+
+# legacy / design files
+frontend-legacy/
+stitch_terra_meetings_ui_redesign/
+
+# backend dev artifacts
+backend/server-*.txt
+backend/server-*.log
+backend/dev-output.log
+backend/start-bg.ps1
+backend/test-check.ts
+backend/create-db.ts
