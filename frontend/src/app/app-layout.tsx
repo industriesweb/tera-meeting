@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCurrentUser } from "@/lib/api/queries/auth";
+import { useAuth } from "@/components/providers/auth-provider";
 import { DashboardIcon, GroupsIcon, ParkingIcon, PriorityHighIcon, CalendarIcon, NotificationsIcon, AdminIcon, PlusCircleIcon } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -28,6 +29,7 @@ function getInitials(name: string): string {
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: user } = useCurrentUser();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -68,6 +70,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <p className="text-sm font-medium text-on-surface truncate">{user.name}</p>
                 <p className="text-[10px] text-secondary font-medium uppercase tracking-wider">{user.operationalRole}</p>
               </div>
+              <button
+                onClick={() => signOut()}
+                className="text-[10px] text-secondary hover:text-error transition-colors font-medium shrink-0"
+                title="Sign out"
+              >
+                Sign out
+              </button>
             </div>
           )}
           <Link
