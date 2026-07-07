@@ -773,13 +773,13 @@ export async function startMeeting(id: string, userId: string) {
       create: {
         meetingId: id,
         startedAt: now,
-        activeAgendaItemId: firstItem?.id ?? null,
+        activeAgendaItem: firstItem ? { connect: { id: firstItem.id } } : undefined,
         activeItemStartedAt: firstItem ? now : null,
         version: 0,
       },
       update: {
         startedAt: now,
-        activeAgendaItemId: firstItem?.id ?? null,
+        activeAgendaItem: firstItem ? { connect: { id: firstItem.id } } : { disconnect: true },
         activeItemStartedAt: firstItem ? now : null,
         overtimeStartedAt: null,
         overtimeDeadlineAt: null,
@@ -1514,7 +1514,7 @@ export async function reconcileLiveMeeting(meetingId: string, now: Date): Promis
       const updatedTimer = await prisma.meetingTimer.update({
         where: { meetingId, version: timer.version },
         data: {
-          activeAgendaItemId: nextItem.id,
+          activeAgendaItem: { connect: { id: nextItem.id } },
           activeItemStartedAt: itemEnd,
           version: { increment: 1 },
         },
@@ -1529,7 +1529,7 @@ export async function reconcileLiveMeeting(meetingId: string, now: Date): Promis
       const updatedTimer = await prisma.meetingTimer.update({
         where: { meetingId, version: timer.version },
         data: {
-          activeAgendaItemId: null,
+          activeAgendaItem: { disconnect: true },
           activeItemStartedAt: null,
           version: { increment: 1 },
         },
@@ -1638,7 +1638,7 @@ export async function skipCurrentAgendaItem(meetingId: string, userId: string) {
       await tx.meetingTimer.update({
         where: { meetingId },
         data: {
-          activeAgendaItemId: nextItem.id,
+          activeAgendaItem: { connect: { id: nextItem.id } },
           activeItemStartedAt: now,
           activeItemExtensionSeconds: 0,
           version: { increment: 1 },
@@ -1648,7 +1648,7 @@ export async function skipCurrentAgendaItem(meetingId: string, userId: string) {
       await tx.meetingTimer.update({
         where: { meetingId },
         data: {
-          activeAgendaItemId: null,
+          activeAgendaItem: { disconnect: true },
           activeItemStartedAt: null,
           version: { increment: 1 },
         },
