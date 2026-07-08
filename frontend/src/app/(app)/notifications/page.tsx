@@ -34,7 +34,7 @@ export default function NotificationsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-headline text-2xl font-bold text-on-surface">Notifications</h1>
+            <h1 className="font-headline text-3xl font-bold text-on-surface">Notifications</h1>
             <p className="text-sm text-secondary mt-1">
               {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}` : "All caught up"}
             </p>
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
             <button
               onClick={handleMarkAllRead}
               disabled={markAll.isPending}
-              className="px-4 py-2 rounded-lg bg-primary-container/40 text-on-primary-fixed-variant text-sm font-bold hover:brightness-110 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
             >
               Mark all read
             </button>

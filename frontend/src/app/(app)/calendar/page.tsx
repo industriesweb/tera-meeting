@@ -48,13 +48,13 @@ export default function CalendarPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-headline text-3xl font-semibold text-on-surface">Calendar</h1>
+          <h1 className="font-headline text-3xl font-bold text-on-surface">Calendar</h1>
           <p className="text-secondary mt-1">View your meetings day by day.</p>
         </div>
         {canCreate && (
           <Link
             href="/meetings/new"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold shadow-md shadow-primary/15 hover:brightness-110 active:scale-[0.98] transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
           >
             <AddIcon className="h-4 w-4" />
             Schedule Meeting
@@ -62,7 +62,7 @@ export default function CalendarPage() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl shadow-terra p-4 border border-outline-variant/15">
+      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4">
         <button
           onClick={handleToday}
           className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all"
@@ -90,7 +90,7 @@ export default function CalendarPage() {
         />
       </div>
 
-      <div className="bg-surface-container-lowest rounded-2xl shadow-terra border border-outline-variant/15">
+      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/20">
         <div className="px-5 py-4 border-b border-outline-variant/10">
           <h2 className="font-headline text-lg font-semibold text-on-surface">
             {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", {
@@ -116,7 +116,7 @@ export default function CalendarPage() {
             {canCreate && (
               <Link
                 href="/meetings/new"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold shadow-md shadow-primary/15 hover:brightness-110 active:scale-[0.98] transition-all"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
               >
                 <AddIcon className="h-4 w-4" />
                 Schedule Meeting

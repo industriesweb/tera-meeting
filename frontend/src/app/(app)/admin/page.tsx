@@ -145,15 +145,15 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="flex items-start justify-between mb-8">
+    <div className="p-6 space-y-6">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-headline text-2xl font-bold text-on-surface">Organization Administration</h1>
-          <p className="text-sm text-secondary font-body mt-0.5">Manage teams, members, and rooms</p>
+          <h1 className="font-headline text-3xl font-bold text-on-surface">Organization Administration</h1>
+          <p className="text-secondary text-sm mt-1">Manage teams, members, and rooms</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-4">
         {[
           { label: "Total Teams", value: (teams?.length ?? 0).toString(), Icon: GroupsIcon, color: "text-primary" },
           { label: "Total Members", value: (users?.length ?? 0).toString(), Icon: PersonIcon, color: "text-tertiary" },

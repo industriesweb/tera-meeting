@@ -162,7 +162,7 @@ export default function MeetingsPage() {
         {canCreate && (
           <Link
             href="/meetings/new"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
           >
             <PlusIcon className="h-4 w-4" />
             Create Meeting
