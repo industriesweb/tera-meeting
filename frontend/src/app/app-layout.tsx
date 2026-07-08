@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useCurrentUser } from "@/lib/api/queries/auth";
+import { useUnreadCount } from "@/lib/api/queries/notifications";
 import { useAuth } from "@/components/providers/auth-provider";
 import { DashboardIcon, GroupsIcon, ParkingIcon, PriorityHighIcon, CalendarIcon, NotificationsIcon, AdminIcon, PlusCircleIcon } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { playBeep } from "@/lib/sounds";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", Icon: DashboardIcon },
@@ -30,6 +33,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: user } = useCurrentUser();
   const { signOut } = useAuth();
+  const { data: unreadData } = useUnreadCount();
+  const prevRef = useRef(0);
+
+  useEffect(() => {
+    const current = unreadData?.count ?? 0;
+    if (current > prevRef.current) playBeep();
+    prevRef.current = current;
+  }, [unreadData?.count]);
 
   return (
     <div className="min-h-screen bg-background flex">
