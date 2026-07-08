@@ -1,7 +1,17 @@
 import { prisma } from "../../config/database";
+import { supabaseAdmin } from "../../config/supabase-admin";
+import { env } from "../../config/env";
 import { NotFoundError, ForbiddenError, ValidationError } from "../../common/errors/app-error";
 import { logAuditEvent } from "../../services/audit.service";
+import { sendInvitationEmail } from "../../services/email.service";
 import type { OperationalRole } from "@prisma/client";
+
+function generateTempPassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  let pwd = "";
+  for (let i = 0; i < 12; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  return pwd + "!Aa1";
+}
 
 const userInclude = {
   organization: true,
@@ -43,6 +53,14 @@ export async function createUser(data: {
     throw new ValidationError("Team Admin role requires a functional team");
   }
 
+  const password = generateTempPassword();
+  const { error: authError } = await supabaseAdmin.auth.admin.createUser({
+    email: data.email.trim().toLowerCase(),
+    password,
+    email_confirm: true,
+  });
+  if (authError) throw new ValidationError(`Failed to create auth user: ${authError.message}`);
+
   const user = await prisma.user.create({
     data: {
       name: data.name.trim(),
@@ -70,7 +88,11 @@ export async function createUser(data: {
     },
   });
 
-  return user;
+  sendInvitationEmail(data.email, password).catch((err) =>
+    console.warn("[email] Failed to send invitation:", err.message)
+  );
+
+  return { user, tempPassword: password };
 }
 
 export async function updateUser(

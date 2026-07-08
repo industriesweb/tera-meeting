@@ -16,4 +16,7 @@ export const env = {
   DIRECT_URL: process.env.DIRECT_URL,
   SUPABASE_URL: requireEnv("SUPABASE_URL"),
   SUPABASE_JWT_SECRET: requireEnv("SUPABASE_JWT_SECRET"),
+  SUPABASE_SERVICE_ROLE_KEY: requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  APP_URL: process.env.APP_URL || process.env.FRONTEND_URL || "http://localhost:3000",
 };

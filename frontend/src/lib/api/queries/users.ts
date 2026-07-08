@@ -34,10 +34,15 @@ type CreateUserData = {
   isExecutive?: boolean;
 };
 
+type CreateUserResponse = {
+  tempPassword: string;
+  user: User;
+};
+
 export function useCreateUser() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: CreateUserData) => unwrap<User>(api.post("users", { json: data })),
+    mutationFn: async (data: CreateUserData) => unwrap<CreateUserResponse>(api.post("users", { json: data })),
     onSuccess: () => { qc.invalidateQueries({ queryKey: userKeys.lists() }); },
   });
 }

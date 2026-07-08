@@ -24,10 +24,13 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   }
   const organizationId = await resolveOrganizationId(req);
   const { name, email, functionalTeamId, operationalRole, isExecutive } = req.body;
-  const user = await usersService.createUser({
+  const result = await usersService.createUser({
     name, email, functionalTeamId, operationalRole, isExecutive, organizationId, actorId: req.user!.sub,
   });
-  res.status(201).json(user);
+  res.status(201).json({
+    tempPassword: result.tempPassword,
+    user: result.user,
+  });
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
