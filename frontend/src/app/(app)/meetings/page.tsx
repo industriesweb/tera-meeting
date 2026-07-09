@@ -235,8 +235,53 @@ export default function MeetingsPage() {
         {isLoading && cursor === null ? (
           <TableSkeleton />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <>
+            {/* Mobile: card layout */}
+            <div className="md:hidden space-y-3">
+              {accumulated.length > 0 ? accumulated.map((meeting) => (
+                <Link
+                  key={`${meeting.id}-${cursor ?? "0"}`}
+                  href={meeting.capabilities.canOpenLiveRoom ? `/meetings/${meeting.id}/live` : `/meetings/${meeting.id}`}
+                  className="block bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <p className="font-semibold text-on-surface text-sm leading-snug line-clamp-1">{meeting.title}</p>
+                    <StatusBadge status={meeting.status} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-1.5 text-xs text-secondary">
+                    {meeting.scheduledAt ? (
+                      <span>{formatDateTime(meeting.scheduledAt, data?.timezone || "UTC")}</span>
+                    ) : (
+                      <span className="text-secondary/50">Not scheduled</span>
+                    )}
+                    <span className="text-right"><KindBadge kind={meeting.kind} /></span>
+                    <span className="inline-flex items-center rounded-md bg-surface-container-high px-1.5 py-0.5 font-medium">
+                      {meeting.ownerTeam.name}
+                    </span>
+                    <span className="text-right text-on-surface">{meeting.organizer.name}</span>
+                    <span className="text-secondary">{formatDuration(meeting.plannedDurationSeconds)}</span>
+                    <span className="text-right">
+                      {meeting.status === "IN_PROGRESS" && meeting.capabilities.canOpenLiveRoom && (
+                        <span className="text-xs font-semibold text-primary">Open Live Room</span>
+                      )}
+                    </span>
+                  </div>
+                </Link>
+              )) : (
+                <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 py-16 text-center">
+                  <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-secondary/40">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <p className="text-secondary text-sm mt-3">No meetings found</p>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop: table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-outline-variant/20 bg-surface-container/30">
                   <th className="text-left py-3 px-5 text-[11px] font-bold text-secondary uppercase tracking-wider">Meeting Title</th>
@@ -291,6 +336,7 @@ export default function MeetingsPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 
