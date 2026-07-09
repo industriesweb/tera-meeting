@@ -26,7 +26,7 @@ const STATUS_TABS: { key: ParkingLotStatus | "ALL"; label: string }[] = [
 ];
 
 const STATUS_COLORS: Record<ParkingLotStatus, string> = {
-  PENDING_REVIEW: "bg-tertiary/15 text-tertiary",
+  PENDING_REVIEW: "bg-secondary/15 text-secondary",
   APPROVED: "bg-primary/15 text-primary",
   USED_IN_AGENDA: "bg-secondary-container text-secondary",
   ARCHIVED: "bg-surface-container-high text-secondary/60",

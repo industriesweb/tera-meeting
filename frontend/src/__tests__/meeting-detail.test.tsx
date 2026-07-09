@@ -72,7 +72,7 @@ describe("Phase 5.1 — Meeting Detail Page", () => {
   describe("Canonical status badges", () => {
     it.each([
       ["DRAFT", "Draft", "bg-surface-container-high"],
-      ["SCHEDULED", "Scheduled", "bg-tertiary-fixed"],
+      ["SCHEDULED", "Scheduled", "bg-secondary/40"],
       ["IN_PROGRESS", "Live", "bg-primary/10"],
       ["ENDED_PENDING_SUMMARY", "Summary Pending", "bg-surface-variant"],
       ["COMPLETED_LOCKED", "Completed", "bg-secondary-container"],

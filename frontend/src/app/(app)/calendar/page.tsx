@@ -153,7 +153,7 @@ export default function CalendarPage() {
 
                   {/* Accent bar */}
                   <div className={`w-1 shrink-0 ${
-                    isLive ? "bg-primary" : m.status === "SCHEDULED" ? "bg-tertiary/40" : "bg-outline-variant/30"
+                    isLive ? "bg-primary" : m.status === "SCHEDULED" ? "bg-secondary/40" : "bg-outline-variant/30"
                   }`} />
 
                   {/* Content */}

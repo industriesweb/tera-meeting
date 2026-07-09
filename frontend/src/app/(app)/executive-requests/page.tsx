@@ -15,7 +15,7 @@ const priorityStyles: Record<string, { bg: string; text: string; dot: string }> 
 };
 
 const statusStyles: Record<string, { text: string; dot: string }> = {
-  OPEN: { text: "Open", dot: "bg-tertiary" },
+  OPEN: { text: "Open", dot: "bg-secondary/50" },
   PLANNING: { text: "Planning", dot: "bg-primary" },
   SCHEDULED: { text: "Scheduled", dot: "bg-primary" },
   COMPLETED: { text: "Completed", dot: "bg-primary" },

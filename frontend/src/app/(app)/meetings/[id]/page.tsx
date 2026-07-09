@@ -38,7 +38,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 const STATUS_CONFIG: Record<string, { classes: string; pulse?: boolean }> = {
   DRAFT: { classes: "bg-surface-container-high text-secondary/60" },
-  SCHEDULED: { classes: "bg-tertiary-fixed/60 text-tertiary" },
+  SCHEDULED: { classes: "bg-secondary/40 text-secondary" },
   IN_PROGRESS: { classes: "bg-primary/10 text-primary", pulse: true },
   ENDED_PENDING_SUMMARY: { classes: "bg-surface-variant text-on-surface-variant" },
   COMPLETED_LOCKED: { classes: "bg-secondary-container/60 text-secondary" },

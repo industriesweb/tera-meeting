@@ -12,7 +12,7 @@ export const STATUS_LABEL: Record<MeetingStatus, string> = {
 
 export const STATUS_CLASSES: Record<MeetingStatus, string> = {
   DRAFT: "bg-surface-container-high text-secondary/60",
-  SCHEDULED: "bg-tertiary-fixed/60 text-tertiary",
+  SCHEDULED: "bg-secondary/40 text-secondary",
   IN_PROGRESS: "bg-primary/10 text-primary",
   ENDED_PENDING_SUMMARY: "bg-surface-variant text-on-surface-variant",
   COMPLETED_LOCKED: "bg-secondary-container/60 text-secondary",
