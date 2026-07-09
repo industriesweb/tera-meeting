@@ -62,22 +62,22 @@ export default function CalendarPage() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4">
+      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto max-w-full">
         <button
           onClick={handleToday}
-          className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all"
+          className="rounded-xl bg-primary text-primary-foreground px-3 py-1.5 md:px-4 md:py-2 text-sm font-semibold whitespace-nowrap shrink-0 hover:brightness-110 transition-all"
         >
           Today
         </button>
         <button
           onClick={handleTomorrow}
-          className="rounded-xl border border-outline-variant bg-background text-on-surface px-4 py-2 text-sm font-semibold hover:bg-surface-container-high transition-colors"
+          className="rounded-xl border border-outline-variant bg-background text-on-surface px-3 py-1.5 md:px-4 md:py-2 text-sm font-semibold whitespace-nowrap shrink-0 hover:bg-surface-container-high transition-colors"
         >
           Tomorrow
         </button>
         <button
           onClick={handleDayAfterTomorrow}
-          className="rounded-xl border border-outline-variant bg-background text-on-surface px-4 py-2 text-sm font-semibold hover:bg-surface-container-high transition-colors"
+          className="rounded-xl border border-outline-variant bg-background text-on-surface px-3 py-1.5 md:px-4 md:py-2 text-sm font-semibold whitespace-nowrap shrink-0 hover:bg-surface-container-high transition-colors"
         >
           Day after tomorrow
         </button>

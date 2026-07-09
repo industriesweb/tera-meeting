@@ -120,7 +120,7 @@ export default function ParkingLotPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto">
+      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto max-w-full">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.key}

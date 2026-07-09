@@ -171,21 +171,21 @@ export default function MeetingsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto max-w-full">
+        <div className="relative flex-1 min-w-[140px] md:min-w-[200px] shrink-0">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search meetings..."
-            className="w-full rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-2.5 pl-10 pr-3 font-medium placeholder:text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            placeholder="Search..."
+            className="w-full rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-1.5 md:py-2.5 pl-10 pr-3 font-medium placeholder:text-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
           />
         </div>
         <select
           value={statuses}
           onChange={(e) => setStatuses(e.target.value)}
-          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-2.5 pl-3 pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-1.5 md:py-2.5 pl-2.5 md:pl-3 pr-6 md:pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer shrink-0"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -194,7 +194,7 @@ export default function MeetingsPage() {
         <select
           value={kinds}
           onChange={(e) => setKinds(e.target.value)}
-          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-2.5 pl-3 pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-1.5 md:py-2.5 pl-2.5 md:pl-3 pr-6 md:pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer shrink-0"
         >
           {KIND_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -203,7 +203,7 @@ export default function MeetingsPage() {
         <select
           value={ownerTeamId}
           onChange={(e) => setOwnerTeamId(e.target.value)}
-          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-2.5 pl-3 pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-1.5 md:py-2.5 pl-2.5 md:pl-3 pr-6 md:pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer shrink-0"
         >
           <option value="">All Teams</option>
           {teamOptions.map((team) => (
@@ -213,7 +213,7 @@ export default function MeetingsPage() {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-2.5 pl-3 pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className="appearance-none rounded-xl border border-outline-variant bg-background text-sm text-on-surface py-1.5 md:py-2.5 pl-2.5 md:pl-3 pr-6 md:pr-8 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer shrink-0"
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -222,10 +222,10 @@ export default function MeetingsPage() {
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-outline-variant bg-background text-secondary px-3 py-2.5 text-sm font-medium hover:bg-surface-container-high transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-outline-variant bg-background text-secondary px-2.5 md:px-3 py-1.5 md:py-2.5 text-sm font-medium hover:bg-surface-container-high transition-colors shrink-0"
           >
             <XIcon className="h-3.5 w-3.5" />
-            Clear
+            <span className="hidden md:inline">Clear</span>
           </button>
         )}
       </div>

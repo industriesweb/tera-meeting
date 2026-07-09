@@ -55,7 +55,7 @@ export default function ExecutiveRequestsPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto">
+      <div className="flex items-center gap-2 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-2 overflow-x-auto max-w-full">
         {["ALL", "OPEN", "PLANNING", "SCHEDULED", "COMPLETED", "CANCELLED"].map((s) => {
           const count = s === "ALL" ? requests?.length : requests?.filter((r) => r.status === s).length;
           return (
