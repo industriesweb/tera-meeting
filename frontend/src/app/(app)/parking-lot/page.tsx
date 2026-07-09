@@ -103,39 +103,38 @@ export default function ParkingLotPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-headline text-2xl font-bold text-on-surface">Parking Lot</h1>
-            <p className="text-sm text-secondary mt-1">Items queued for future meeting agendas</p>
-          </div>
-          {myTeamId && (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all"
-            >
-              <AddIcon className="h-5 w-5" />
-              New Item
-            </button>
-          )}
+    <div className="p-6 space-y-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="font-headline text-3xl font-bold text-on-surface">Parking Lot</h1>
+          <p className="text-secondary text-sm mt-1">Items queued for future meeting agendas</p>
         </div>
+        {myTeamId && (
+          <button
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all"
+          >
+            <AddIcon className="h-4 w-4" />
+            New Item
+          </button>
+        )}
+      </div>
 
-        <div className="flex gap-2 mb-6 border-b border-outline-variant/20 pb-3">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === tab.key
-                  ? "bg-primary-container/40 text-on-primary-fixed-variant"
-                  : "text-secondary hover:text-primary hover:bg-surface-container-high"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`rounded-xl text-sm font-semibold px-4 py-2 transition-all ${
+              activeTab === tab.key
+                ? "bg-primary text-primary-foreground"
+                : "border border-outline-variant bg-background text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
         {filteredItems.length === 0 ? (
           <div className="text-center py-16">
@@ -145,7 +144,7 @@ export default function ParkingLotPage() {
         ) : (
           <div className="space-y-3">
             {filteredItems.map((item) => (
-              <div key={item.id} className="bg-surface rounded-xl border border-outline-variant/20 p-5">
+              <div key={item.id} className="bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -276,6 +275,5 @@ export default function ParkingLotPage() {
           </div>
         )}
       </div>
-    </div>
-  );
-}
+    );
+  }

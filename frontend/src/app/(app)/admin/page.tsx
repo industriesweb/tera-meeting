@@ -172,7 +172,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="flex items-center border-b border-outline-variant/20 mb-8 gap-1">
+      <div className="flex items-center border-b border-outline-variant/20 gap-1">
         {tabs.map((tab, i) => (
           <button key={tab} onClick={() => setActiveTab(i)}
             className={cn("px-5 py-3 text-sm font-semibold font-body border-b-2 transition-all",
@@ -184,7 +184,7 @@ export default function AdminPage() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 rounded-xl bg-error/10 border border-error/20 text-sm text-error font-medium">
+        <div className="p-4 rounded-xl bg-error/10 border border-error/20 text-sm text-error font-medium">
           {error}
           <button onClick={() => setError(null)} className="ml-3 underline">Dismiss</button>
         </div>
@@ -197,7 +197,7 @@ export default function AdminPage() {
             <p className="text-sm text-secondary">{teams?.length ?? 0} team(s)</p>
             {isSecretary && (
               <button onClick={() => setShowTeamForm(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all">
+                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all">
                 <PlusIcon className="h-4 w-4" /> Add Team
               </button>
             )}
@@ -270,7 +270,7 @@ export default function AdminPage() {
             <p className="text-sm text-secondary">{users?.length ?? 0} member(s)</p>
             {isSecretary && (
               <button onClick={() => setShowUserForm(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all">
+                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all">
                 <PlusIcon className="h-4 w-4" /> Add Person
               </button>
             )}
@@ -333,7 +333,7 @@ export default function AdminPage() {
             <p className="text-sm text-secondary">{rooms?.length ?? 0} room(s)</p>
             {isSecretary && (
               <button onClick={() => setShowRoomForm(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:brightness-110 transition-all">
+                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all">
                 <PlusIcon className="h-4 w-4" /> Add Room
               </button>
             )}
