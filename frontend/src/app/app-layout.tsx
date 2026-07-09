@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCurrentUser } from "@/lib/api/queries/auth";
 import { useUnreadCount } from "@/lib/api/queries/notifications";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -29,12 +29,23 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+function HamburgerIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="3" y1="5" x2="17" y2="5" />
+      <line x1="3" y1="10" x2="17" y2="10" />
+      <line x1="3" y1="15" x2="17" y2="15" />
+    </svg>
+  );
+}
+
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: user } = useCurrentUser();
   const { signOut } = useAuth();
   const { data: unreadData } = useUnreadCount();
   const prevRef = useRef(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const current = unreadData?.count ?? 0;
@@ -42,9 +53,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     prevRef.current = current;
   }, [unreadData?.count]);
 
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
   return (
     <div className="min-h-screen bg-background flex">
-      <aside className="fixed left-0 top-0 h-screen w-60 flex flex-col z-40 bg-surface-container-low border-r border-outline-variant/20">
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <aside className={`fixed left-0 top-0 h-screen w-60 flex flex-col z-40 bg-surface-container-low border-r border-outline-variant/20 transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
         <div className="px-5 pt-6 pb-4">
           <h1 className="font-headline text-lg font-bold text-primary tracking-tight">Terra Meetings</h1>
           <p className="text-[10px] text-secondary font-semibold uppercase tracking-[0.2em] mt-0.5">Enterprise Suite</p>
@@ -100,7 +119,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <main className="ml-60 flex-1 min-h-screen">{children}</main>
+      <main className="flex-1 min-h-screen ml-0 md:ml-60">
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="fixed top-4 left-4 z-20 md:hidden p-2 rounded-lg bg-surface-container-low border border-outline-variant/20 text-on-surface shadow-md"
+          aria-label="Open menu"
+        >
+          <HamburgerIcon />
+        </button>
+        <div className="pt-14 md:pt-0">{children}</div>
+      </main>
     </div>
   );
 }

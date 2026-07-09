@@ -153,7 +153,7 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Total Teams", value: (teams?.length ?? 0).toString(), Icon: GroupsIcon, color: "text-primary" },
           { label: "Total Members", value: (users?.length ?? 0).toString(), Icon: PersonIcon, color: "text-tertiary" },
@@ -204,6 +204,7 @@ export default function AdminPage() {
           </div>
           <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden">
             {teamsLoading ? <div className="p-12 text-center text-secondary">Loading teams...</div> : (
+            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-outline-variant/20">
@@ -258,6 +259,7 @@ export default function AdminPage() {
                   )}
                 </tbody>
               </table>
+            </div>
             )}
           </div>
         </div>
@@ -277,6 +279,7 @@ export default function AdminPage() {
           </div>
           <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden">
             {usersLoading ? <div className="p-12 text-center text-secondary">Loading users...</div> : (
+            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-outline-variant/20">
@@ -321,6 +324,7 @@ export default function AdminPage() {
                   )}
                 </tbody>
               </table>
+            </div>
             )}
           </div>
         </div>
@@ -340,6 +344,7 @@ export default function AdminPage() {
           </div>
           <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden">
             {roomsLoading ? <div className="p-12 text-center text-secondary">Loading rooms...</div> : (
+            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-outline-variant/20">
@@ -390,6 +395,7 @@ export default function AdminPage() {
                   )}
                 </tbody>
               </table>
+            </div>
             )}
           </div>
         </div>
