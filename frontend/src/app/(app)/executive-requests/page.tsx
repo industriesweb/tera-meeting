@@ -5,7 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { selectExecutiveInbox, useRoleAwareExecutiveRequests } from "@/lib/api/queries/executive-requests";
 import { useCurrentUser } from "@/lib/api/queries/auth";
-import { ChevronRightIcon, PersonIcon, DateRangeIcon, ScheduleIcon, LinkIcon } from "@/components/icons";
+import { PersonIcon, DateRangeIcon, ScheduleIcon, LinkIcon } from "@/components/icons";
 import type { ExecutiveRequest } from "@/types/api";
 
 const priorityStyles: Record<string, { bg: string; text: string; dot: string }> = {
@@ -42,26 +42,20 @@ export default function ExecutiveRequestsPage() {
   }) ?? [];
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <nav className="flex items-center gap-2 text-xs text-secondary font-body mb-6">
-        <Link href="/dashboard" className="hover:text-primary transition-colors cursor-pointer">Dashboard</Link>
-        <ChevronRightIcon className="h-4 w-4 text-secondary/40" />
-        <span className="text-on-surface font-semibold">Executive Requests</span>
-      </nav>
-
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-6 space-y-6">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-headline text-2xl font-bold text-on-surface">Executive Requests</h1>
-          <p className="text-sm text-secondary font-body mt-0.5">
+          <h1 className="font-headline text-3xl font-bold text-on-surface">Executive Requests</h1>
+          <p className="text-secondary text-sm mt-1">
             {isLoading ? "Loading..." : `${requests?.length ?? 0} ${inbox === "all" ? "organization" : inbox === "mine" ? "created" : "assigned"} requests`}
           </p>
         </div>
         {currentUser?.isExecutive && (
-          <Link href="/executive-requests/new" className="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">New Request</Link>
+          <Link href="/executive-requests/new" className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all">New Request</Link>
         )}
       </div>
 
-      <div className="flex items-center gap-3 mb-6 flex-wrap">
+      <div className="flex flex-wrap items-center gap-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-4">
         {["ALL", "OPEN", "PLANNING", "SCHEDULED", "COMPLETED", "CANCELLED"].map((s) => {
           const count = s === "ALL" ? requests?.length : requests?.filter((r) => r.status === s).length;
           return (
@@ -69,10 +63,10 @@ export default function ExecutiveRequestsPage() {
               key={s}
               onClick={() => setFilter(s)}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold font-body transition-all",
+                "rounded-xl text-sm font-semibold px-4 py-2 transition-all",
                 filter === s
                   ? "bg-primary text-primary-foreground"
-                  : "bg-surface-container-high text-secondary/70 hover:bg-surface-container-highest"
+                  : "border border-outline-variant bg-background text-on-surface hover:bg-surface-container-high"
               )}
             >
               {s === "ALL" ? "All" : statusStyles[s]?.text ?? s}
