@@ -62,7 +62,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     if (current > prevRef.current) {
       const latest = notifications?.[0];
       if (latest && latest.id !== prevIdRef.current) {
-        if (latest.type === "MEETING_REMINDER" || latest.type === "MEETING_CANCELLED") {
+        if (latest.type === "MEETING_REMINDER" || latest.type === "MEETING_CANCELLED" || latest.type === "MEETING_ENDED") {
           playAlarm();
         } else {
           playBeep();

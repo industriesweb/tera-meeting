@@ -1,7 +1,7 @@
 "use client";
 
 import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead } from "@/lib/api/queries/notifications";
-import { MailIcon, AlarmIcon, EditIcon, CancelIcon, PersonRemoveIcon, NotificationsIcon } from "@/components/icons";
+import { MailIcon, AlarmIcon, EditIcon, CancelIcon, PersonRemoveIcon, NotificationsIcon, ScheduleIcon } from "@/components/icons";
 import type { NotificationType } from "@/types/api";
 import type { SVGProps } from "react";
 
@@ -10,6 +10,7 @@ const NOTIFICATION_ICONS: Record<NotificationType, React.ComponentType<SVGProps<
   MEETING_REMINDER: AlarmIcon,
   MEETING_UPDATED: EditIcon,
   MEETING_CANCELLED: CancelIcon,
+  MEETING_ENDED: ScheduleIcon,
   ATTENDEE_REMOVED: PersonRemoveIcon,
 };
 

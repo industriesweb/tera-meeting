@@ -35,6 +35,7 @@ export type NotificationType =
   | "MEETING_REMINDER"
   | "MEETING_UPDATED"
   | "MEETING_CANCELLED"
+  | "MEETING_ENDED"
   | "ATTENDEE_REMOVED";
 export type CrossTeamInviteStatus = "PENDING" | "APPROVED" | "DECLINED";
 export type MeetingJoinRequestStatus = "PENDING" | "APPROVED" | "DECLINED";

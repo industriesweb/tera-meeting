@@ -1612,7 +1612,23 @@ export async function reconcileLiveMeeting(meetingId: string, now: Date): Promis
       }
       return m.count > 0;
     });
-    if (autoEnded) changed = true;
+    if (autoEnded) {
+      const atts = await prisma.meetingAttendee.findMany({
+        where: { meetingId, removedAt: null },
+      });
+      const now_ = new Date();
+      await prisma.notification.createMany({
+        data: atts.map((a) => ({
+          userId: a.userId,
+          type: "MEETING_ENDED" as const,
+          title: "Meeting ended",
+          body: `"${meeting.title}" has ended after overtime`,
+          data: { meetingId },
+          createdAt: now_,
+        })),
+      });
+      changed = true;
+    }
   }
 
   // ── Phase 3: Timeout warnings ──
@@ -1624,11 +1640,20 @@ export async function reconcileLiveMeeting(meetingId: string, now: Date): Promis
       const timeLeft = itemEnd.getTime() - now.getTime();
       if (timeLeft > 0 && timeLeft <= 30_000) {
         const existing = await prisma.notification.findFirst({
-          where: { userId: meeting.organizerId, type: "MEETING_REMINDER", createdAt: { gte: new Date(now.getTime() - 60_000) } },
+          where: { type: "MEETING_REMINDER", meetingId, createdAt: { gte: new Date(now.getTime() - 60_000) } },
         });
         if (!existing) {
-          await prisma.notification.create({
-            data: { userId: meeting.organizerId, type: "MEETING_REMINDER", title: "Agenda item ending soon", body: `"${activeItem.title}" ends in ${Math.ceil(timeLeft / 1000)}s`, data: { meetingId } },
+          const atts = await prisma.meetingAttendee.findMany({
+            where: { meetingId, removedAt: null },
+          });
+          await prisma.notification.createMany({
+            data: atts.map((a) => ({
+              userId: a.userId,
+              type: "MEETING_REMINDER",
+              title: "Agenda item ending soon",
+              body: `"${activeItem.title}" ends in ${Math.ceil(timeLeft / 1000)}s`,
+              data: { meetingId },
+            })),
           });
         }
       }
@@ -1638,11 +1663,20 @@ export async function reconcileLiveMeeting(meetingId: string, now: Date): Promis
     const timeLeftOvertime = timer.overtimeDeadlineAt.getTime() - now.getTime();
     if (timeLeftOvertime > 0 && timeLeftOvertime <= 30_000) {
       const existing = await prisma.notification.findFirst({
-        where: { userId: meeting.organizerId, type: "MEETING_REMINDER", createdAt: { gte: new Date(now.getTime() - 60_000) } },
+        where: { type: "MEETING_REMINDER", meetingId, createdAt: { gte: new Date(now.getTime() - 60_000) } },
       });
       if (!existing) {
-        await prisma.notification.create({
-          data: { userId: meeting.organizerId, type: "MEETING_REMINDER", title: "Meeting overtime ending soon", body: `Overtime ends in ${Math.ceil(timeLeftOvertime / 1000)}s`, data: { meetingId } },
+        const atts = await prisma.meetingAttendee.findMany({
+          where: { meetingId, removedAt: null },
+        });
+        await prisma.notification.createMany({
+          data: atts.map((a) => ({
+            userId: a.userId,
+            type: "MEETING_REMINDER",
+            title: "Meeting overtime ending soon",
+            body: `Overtime ends in ${Math.ceil(timeLeftOvertime / 1000)}s`,
+            data: { meetingId },
+          })),
         });
       }
     }

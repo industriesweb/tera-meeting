@@ -6,6 +6,8 @@ const mockPrisma = vi.hoisted(() => ({
   user: { findUnique: vi.fn() },
   meetingTimer: { findUnique: vi.fn(), update: vi.fn(), upsert: vi.fn() },
   agendaItem: { findMany: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
+  meetingAttendee: { findMany: vi.fn().mockResolvedValue([]) },
+  notification: { createMany: vi.fn() },
   timelineEvent: { create: vi.fn() },
   auditEvent: { create: vi.fn() },
   $transaction: vi.fn(),
